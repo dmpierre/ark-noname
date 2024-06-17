@@ -16,46 +16,34 @@ struct NoNameCircuit<BF: BackendField> {
 }
 impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NoNameCircuit<BF> {
     fn generate_constraints(self, cs: ConstraintSystemRef<F>) -> Result<(), SynthesisError> {
-        for var in self.compiled_circuit.circuit.backend.public_inputs.iter() {
-            let value: BigUint = self.witness.witness[var.index].into();
-            cs.new_input_variable(|| Ok(F::from(value)))?;
-        }
-
-        for var in self.compiled_circuit.circuit.backend.public_outputs.iter() {
-            let value: BigUint = self.witness.witness[var.index].into();
-            cs.new_input_variable(|| Ok(F::from(value)))?;
-        }
-
-        for var in self
-            .compiled_circuit
-            .circuit
-            .backend
-            .private_input_cell_vars
-            .iter()
-        {
-            let value: BigUint = self.witness.witness[var.index].into();
-            cs.new_witness_variable(|| Ok(F::from(value)))?;
-        }
-
         let public_io_length = self.compiled_circuit.circuit.backend.public_inputs.len()
             + self.compiled_circuit.circuit.backend.public_outputs.len();
 
+        // arkworks assigns by default the 1 constant
+        // assumes witness is: [1, public_inputs, public_outputs, private_inputs, aux]
+        let witness_size = self.witness.witness.len();
+        for idx in 1..witness_size {
+            let value: BigUint = Into::into(self.witness.witness[idx]);
+            let field_element = F::from(value);
+            if idx <= public_io_length {
+                cs.new_input_variable(|| Ok(field_element))?;
+            } else {
+                cs.new_witness_variable(|| Ok(field_element))?;
+            }
+        }
+
         let make_index = |index| {
-            if index < public_io_length {
-                match index == 1 {
+            if index <= public_io_length {
+                match index == 0 {
                     true => Variable::One,
                     false => Variable::Instance(index),
                 }
             } else {
-                Variable::Witness(index - public_io_length)
+                Variable::Witness(index - (public_io_length + 1))
             }
         };
 
         let make_lc = |lc_data: NoNameLinearCombination<BF>| {
-            //lc_data.iter().fold(
-            //    LinearCombination::<F>::zero(),
-            //    |lc: LinearCombination<F>, (index, coeff)| lc + (*coeff, make_index(*index)),
-            //)
             let mut lc = LinearCombination::<F>::zero();
             for (cellvar, coeff) in lc_data.terms.into_iter() {
                 let idx = make_index(cellvar.index);
@@ -65,7 +53,7 @@ impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NoNameCircuit
 
             // add constant
             let constant = F::from(Into::<BigUint>::into(lc_data.constant));
-            lc += (constant, make_index(1));
+            lc += (constant, make_index(0));
             lc
         };
 
@@ -117,7 +105,6 @@ mod tests {
         )
         .unwrap();
         let r1cs = R1CS::<BF>::new();
-
         // compile
         CircuitWriter::generate_circuit(tast, r1cs)
     }
@@ -128,22 +115,19 @@ mod tests {
         let inputs_public = r#"{"public_input": "2"}"#;
         let inputs_private = r#"{"private_input": "2"}"#;
 
-        println!("{:?}", compiled_circuit.main_info().sig());
         let json_public = parse_inputs(inputs_public).unwrap();
         let json_private = parse_inputs(inputs_private).unwrap();
         let generated_witness = compiled_circuit
             .generate_witness(json_public, json_private)
             .unwrap();
+
         let noname_circuit = NoNameCircuit {
             compiled_circuit,
             witness: generated_witness,
         };
+
         let cs = ConstraintSystem::<Fr>::new_ref();
         noname_circuit.generate_constraints(cs.clone()).unwrap();
-        let is_sat = cs.is_satisfied();
-        println!("{:?}", is_sat);
-        //let json_private =
-        //
-        // compiled_circuit.
+        assert!(cs.is_satisfied().unwrap());
     }
 }
