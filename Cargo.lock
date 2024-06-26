@@ -269,7 +269,7 @@ dependencies = [
  "ark-bn254 0.4.0",
  "ark-ff 0.4.2",
  "ark-r1cs-std",
- "ark-relations",
+ "ark-relations 0.4.0",
  "noname",
  "num-bigint",
 ]
@@ -308,12 +308,23 @@ source = "git+https://github.com/winderica/r1cs-std?branch=cherry-pick#8e71ee527
 dependencies = [
  "ark-ec 0.4.2",
  "ark-ff 0.4.2",
- "ark-relations",
+ "ark-relations 0.4.0",
  "ark-std 0.4.0",
  "derivative",
  "num-bigint",
  "num-integer",
  "num-traits",
+ "tracing",
+]
+
+[[package]]
+name = "ark-relations"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cba4c1c99792a6834bd97f7fd76578ec2cd58d2afc5139a17e1d1bec65b38f6"
+dependencies = [
+ "ark-ff 0.3.0",
+ "ark-std 0.3.0",
  "tracing",
 ]
 
@@ -775,6 +786,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d102f1a462fdcdddce88d6d46c06c074a2d2749b262230333726b06c52bb7585"
 
 [[package]]
+name = "educe"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d7bc049e1bd8cdeb31b68bbd586a9464ecf9f3944af3958a7a9d0f8b9799417"
+dependencies = [
+ "enum-ordinalize",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
+]
+
+[[package]]
 name = "either"
 version = "1.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -787,6 +810,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d248bdd43ce613d87415282f69b9bb99d947d290b10962dd6c56233312c2ad5"
 dependencies = [
  "log",
+]
+
+[[package]]
+name = "enum-ordinalize"
+version = "4.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fea0dcfa4e54eeb516fe454635a95753ddd39acda650ce703031c6973e315dd5"
+dependencies = [
+ "enum-ordinalize-derive",
+]
+
+[[package]]
+name = "enum-ordinalize-derive"
+version = "4.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0d28318a75d4aead5c4db25382e8ef717932d0346600cacae6357eb5941bc5ff"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.66",
 ]
 
 [[package]]
@@ -1269,11 +1312,13 @@ dependencies = [
  "ark-bn254 0.3.0",
  "ark-ec 0.3.0",
  "ark-ff 0.3.0",
+ "ark-relations 0.3.0",
  "ark-serialize 0.3.0",
  "camino",
  "clap",
  "constraint_writers",
  "dirs",
+ "educe",
  "ena",
  "itertools",
  "kimchi",

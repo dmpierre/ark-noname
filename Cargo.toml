@@ -10,7 +10,7 @@ ark-r1cs-std = { git = "https://github.com/winderica/r1cs-std", branch="cherry-p
 noname = { path = "/Users/pierredm/repos/forks/dmpierre/noname/" }
 ark-relations = "0.4.0"
 ark-ff = "0.4"
-num-bigint = "0.4.5"
+num-bigint = "0.4.3"
 ark-bn254 = "0.4.0"
 
 
