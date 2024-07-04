@@ -1307,6 +1307,7 @@ dependencies = [
 [[package]]
 name = "noname"
 version = "0.7.0"
+source = "git+https://github.com/dmpierre/noname#c34f173123707b34d365070783c2e701fec1eb44"
 dependencies = [
  "ark-bls12-381",
  "ark-bn254 0.3.0",

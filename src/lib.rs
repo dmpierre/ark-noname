@@ -11,14 +11,14 @@ use noname::witness::CompiledCircuit;
 use num_bigint::BigUint;
 
 pub mod circuits;
+pub mod sonobe;
 pub mod utils;
 
 //#[derive(Debug, Clone)]
 pub struct NoNameCircuit<BF: BackendField> {
-    compiled_circuit: CompiledCircuit<R1CS<BF>>,
-    witness: GeneratedWitness<BF>,
+    pub compiled_circuit: CompiledCircuit<R1CS<BF>>,
+    pub witness: GeneratedWitness<BF>,
 }
-
 impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NoNameCircuit<BF> {
     fn generate_constraints(self, cs: ConstraintSystemRef<F>) -> Result<(), SynthesisError> {
         let public_io_length = self.compiled_circuit.circuit.backend.public_inputs.len()

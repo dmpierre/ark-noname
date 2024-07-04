@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 ark-r1cs-std = { git = "https://github.com/winderica/r1cs-std", branch="cherry-pick" }
-noname = { path = "/Users/pierredm/repos/forks/dmpierre/noname/" }
+noname = { git = "https://github.com/dmpierre/noname" }
 ark-relations = "0.4.0"
 ark-ff = "0.4"
 num-bigint = "0.4.3"
