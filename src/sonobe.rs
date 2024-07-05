@@ -13,7 +13,7 @@ use noname::backends::{
 use noname::witness::CompiledCircuit;
 use num_bigint::BigUint;
 
-pub struct NoNameSonobeCircuit<'a, 'b, 'c, F: PrimeField, BF: BackendField> {
+pub struct NonameSonobeCircuit<'a, 'b, 'c, F: PrimeField, BF: BackendField> {
     pub compiled_circuit: CompiledCircuit<R1CS<BF>>,
     pub witness: GeneratedWitness<BF>,
     pub assigned_z_i: &'a Vec<FpVar<F>>,
@@ -22,7 +22,7 @@ pub struct NoNameSonobeCircuit<'a, 'b, 'c, F: PrimeField, BF: BackendField> {
 }
 
 impl<'a, 'b, 'c, F: PrimeField, BF: BackendField> ConstraintSynthesizer<F>
-    for NoNameSonobeCircuit<'a, 'b, 'c, F, BF>
+    for NonameSonobeCircuit<'a, 'b, 'c, F, BF>
 {
     fn generate_constraints(self, cs: ConstraintSystemRef<F>) -> Result<(), SynthesisError> {
         let public_io_length = self.assigned_z_i.len() * 2;

@@ -2,7 +2,7 @@ use ark_ff::PrimeField;
 use ark_relations::r1cs::{
     ConstraintSynthesizer, ConstraintSystemRef, LinearCombination, SynthesisError, Variable,
 };
-use noname::backends::r1cs::LinearCombination as NoNameLinearCombination;
+use noname::backends::r1cs::LinearCombination as NonameLinearCombination;
 use noname::backends::{
     r1cs::{GeneratedWitness, R1CS},
     BackendField,
@@ -15,11 +15,11 @@ pub mod sonobe;
 pub mod utils;
 
 //#[derive(Debug, Clone)]
-pub struct NoNameCircuit<BF: BackendField> {
+pub struct NonameCircuit<BF: BackendField> {
     pub compiled_circuit: CompiledCircuit<R1CS<BF>>,
     pub witness: GeneratedWitness<BF>,
 }
-impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NoNameCircuit<BF> {
+impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NonameCircuit<BF> {
     fn generate_constraints(self, cs: ConstraintSystemRef<F>) -> Result<(), SynthesisError> {
         let public_io_length = self.compiled_circuit.circuit.backend.public_inputs.len()
             + self.compiled_circuit.circuit.backend.public_outputs.len();
@@ -48,7 +48,7 @@ impl<F: PrimeField, BF: BackendField> ConstraintSynthesizer<F> for NoNameCircuit
             }
         };
 
-        let make_lc = |lc_data: NoNameLinearCombination<BF>| {
+        let make_lc = |lc_data: NonameLinearCombination<BF>| {
             let mut lc = LinearCombination::<F>::zero();
             for (cellvar, coeff) in lc_data.terms.into_iter() {
                 let idx = make_index(cellvar.index);
@@ -96,7 +96,7 @@ mod tests {
             .generate_witness(json_public, json_private)
             .unwrap();
 
-        let noname_circuit = NoNameCircuit {
+        let noname_circuit = NonameCircuit {
             compiled_circuit,
             witness: generated_witness,
         };
@@ -118,7 +118,7 @@ mod tests {
         let generated_witness = compiled_circuit
             .generate_witness(json_public, json_private)
             .unwrap();
-        let noname_circuit = NoNameCircuit {
+        let noname_circuit = NonameCircuit {
             compiled_circuit,
             witness: generated_witness,
         };
